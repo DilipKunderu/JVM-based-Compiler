@@ -43,6 +43,8 @@ public class SymbolTable {
 	public boolean insert(String ident, Dec dec) {
 		// TODO: IMPLEMENT THIS
 		if (symbol_table.containsKey(ident)) {
+			temp = symbol_table.get(ident);
+			if (temp.containsKey(current_scope)) return false;
 			symbol_table.get(ident).put(current_scope, dec);
 		} else {
 			temp = new HashMap<>();
@@ -73,6 +75,7 @@ public class SymbolTable {
 		scope_stack = new Stack<>();
 		symbol_table = new HashMap<>();
 		current_scope = 0;
+		scope_stack.push(current_scope);
 		next_scope = current_scope + 1;
 	}
 

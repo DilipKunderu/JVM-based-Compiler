@@ -54,6 +54,14 @@ public class CodeGenVisitorTest {
     }
 
     @Before
+    public void initLog(){
+    if (devel || grade) PLPRuntimeLog.initLog();
+    }
+    @After
+    public void printLog(){
+    System.out.println(PLPRuntimeLog.getString());
+    }
+    @Before
     public void setUp() throws Exception {
         stdout = System.out;
         outputStream = new ByteArrayOutputStream();

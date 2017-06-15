@@ -1,8 +1,49 @@
 package cop5556sp17.AST;
 
+import cop5556sp17.AST.Type.TypeName;
+
+import org.objectweb.asm.Label;
+
 import cop5556sp17.Scanner.Token;
 
 public class Dec extends ASTNode {
+	
+	TypeName type;
+	Label start_label;
+	Label end_label;
+	int slot;
+	
+	public Label getStart_label() {
+		return start_label;
+	}
+
+	public void setStart_label(Label start_label) {
+		this.start_label = start_label;
+	}
+
+	public Label getEnd_label() {
+		return end_label;
+	}
+
+	public void setEnd_label(Label end_label) {
+		this.end_label = end_label;
+	}
+
+	public int getSlot() {
+		return slot;
+	}
+
+	public void setSlot(int slot) {
+		this.slot = slot;
+	}
+
+	public TypeName gettype() {
+		return type;
+	}
+
+	public void settype(TypeName type) {
+		this.type = type;
+	}
 	
 	final Token ident;
 
@@ -10,6 +51,7 @@ public class Dec extends ASTNode {
 		super(firstToken);
 
 		this.ident = ident;
+		this.slot = -1;
 	}
 
 	public Token getType() {
