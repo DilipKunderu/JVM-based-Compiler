@@ -1,8 +1,19 @@
 package cop5556sp17.AST;
 
+import cop5556sp17.AST.Type.TypeName;
 import cop5556sp17.Scanner.Token;
 
 public class Dec extends ASTNode {
+	
+	TypeName type;
+
+	public TypeName gettype() {
+		return type;
+	}
+
+	public void settype(TypeName type) {
+		this.type = type;
+	}
 	
 	final Token ident;
 

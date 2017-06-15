@@ -1,8 +1,19 @@
 package cop5556sp17.AST;
 
+import cop5556sp17.AST.Type.TypeName;
 import cop5556sp17.Scanner.Token;
 
 public class IdentExpression extends Expression {
+
+	Dec dec;
+
+	public Dec getDec() {
+		return dec;
+	}
+
+	public void setDec(Dec dec) {
+		this.dec = dec;
+	}
 
 	public IdentExpression(Token firstToken) {
 		super(firstToken);
