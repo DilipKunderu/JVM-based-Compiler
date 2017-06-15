@@ -8,6 +8,6 @@ public abstract class ChainElem extends Chain {
 		super(firstToken);
 	}
 
-
+	
 
 }

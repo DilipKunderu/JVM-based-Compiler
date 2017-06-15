@@ -63,60 +63,82 @@ public class TypeCheckVisitor implements ASTVisitor {
 
 	@Override
 	public Object visitBinaryChain(BinaryChain binaryChain, Object arg) throws Exception {
-		// TODO Auto-generated method stub
 		TypeName t0 = ((Chain) binaryChain.getE0().visit(this, null)).gettype();
 		TypeName t1 = ((ChainElem) binaryChain.getE1().visit(this, null)).gettype();
 
 		Token t = binaryChain.getArrow();
 
 		if (t.kind == ARROW) {
-			if (t1 == IMAGE && (t0 == URL || t0 == FILE))
+			if ((t0 == URL || t0 == FILE) && t1 == IMAGE)
+
 				binaryChain.settype(IMAGE);
+
 			else if (t0 == FRAME) {
 				if (binaryChain.getE1() instanceof FrameOpChain) {
-					if (binaryChain.getE1().firstToken.kind == KW_SHOW || binaryChain.getE1().firstToken.kind == KW_HIDE
-							|| binaryChain.getE1().firstToken.kind == KW_MOVE) {
-						binaryChain.settype(FRAME);
-					} else if (binaryChain.getE1().firstToken.kind == KW_XLOC
-							|| binaryChain.getE1().firstToken.kind == KW_YLOC) {
+					if (binaryChain.getE1().firstToken.kind == KW_XLOC
+							|| binaryChain.getE1().firstToken.kind == KW_YLOC)
+
 						binaryChain.settype(INTEGER);
-					} else
+
+					else if (binaryChain.getE1().firstToken.kind == KW_SHOW
+							|| binaryChain.getE1().firstToken.kind == KW_HIDE
+							|| binaryChain.getE1().firstToken.kind == KW_MOVE)
+
+						binaryChain.settype(FRAME);
+
+					else
 						throw new TypeCheckException(
 								"Illegal combination of " + t0.toString() + " and " + t1.toString() + " for " + t.kind);
 				} else
+					throw new TypeCheckException("Illegal Type");
+			} else if (t0 == INTEGER) {
+				if (binaryChain.getE1() instanceof IdentChain && binaryChain.getE1().gettype() == INTEGER)
+
+					binaryChain.settype(INTEGER);
+
+				else
 					throw new TypeCheckException(
 							"Illegal combination of " + t0.toString() + " and " + t1.toString() + " for " + t.kind);
 			} else if (t0 == IMAGE) {
-				if (binaryChain.getE1() instanceof ImageOpChain) {
-					if (binaryChain.getE1().firstToken.kind == OP_WIDTH
-							|| binaryChain.getE1().firstToken.kind == OP_HEIGHT) {
-						binaryChain.settype(INTEGER);
-					} else if (binaryChain.getE1().firstToken.kind == KW_SCALE) {
-						binaryChain.settype(IMAGE);
-					} else
-						throw new TypeCheckException(
-								"Illegal combination of " + t0.toString() + " and " + t1.toString() + " for " + t.kind);
-				} else if (t1 == FRAME) {
+				if (t1 == FRAME)
+
 					binaryChain.settype(FRAME);
-				} else if (t1 == FILE) {
+
+				else if (t1 == FILE)
+
 					binaryChain.settype(NONE);
-				} else if (binaryChain.getE1() instanceof FilterOpChain) {
+
+				else if (binaryChain.getE1() instanceof IdentChain)
+
+					binaryChain.settype(IMAGE);
+
+				else if (binaryChain.getE1() instanceof IdentChain && binaryChain.getE1().gettype() == IMAGE)
+
+					binaryChain.settype(IMAGE);
+
+				else if (binaryChain.getE1() instanceof FilterOpChain) {
 					if (binaryChain.getE1().firstToken.kind == OP_GRAY
 							|| binaryChain.getE1().firstToken.kind == OP_CONVOLVE
-							|| binaryChain.getE1().firstToken.kind == OP_BLUR) {
+							|| binaryChain.getE1().firstToken.kind == OP_BLUR)
+
 						binaryChain.settype(IMAGE);
-					} else
+
+					else
 						throw new TypeCheckException(
 								"Illegal combination of " + t0.toString() + " and " + t1.toString() + " for " + t.kind);
-				} else if ((binaryChain.getE1() instanceof IdentChain) && (binaryChain.getE1().gettype() == IMAGE)) {
-					binaryChain.settype(IMAGE);
-				} else
-					throw new TypeCheckException(
-							"Illegal combination of " + t0.toString() + " and " + t1.toString() + " for " + t.kind);
+				} else if (binaryChain.getE1() instanceof ImageOpChain) {
+					if (binaryChain.getE1().firstToken.kind == OP_WIDTH
+							|| binaryChain.getE1().firstToken.kind == OP_HEIGHT)
 
-			} else if (t0 == INTEGER) {
-				if ((binaryChain.getE1() instanceof IdentChain) && binaryChain.getE1().gettype() == INTEGER) {
-					binaryChain.settype(INTEGER);
+						binaryChain.settype(INTEGER);
+
+					else if (binaryChain.getE1().firstToken.kind == KW_SCALE)
+
+						binaryChain.settype(IMAGE);
+
+					else
+						throw new TypeCheckException(
+								"Illegal combination of " + t0.toString() + " and " + t1.toString() + " for " + t.kind);
 				} else
 					throw new TypeCheckException(
 							"Illegal combination of " + t0.toString() + " and " + t1.toString() + " for " + t.kind);
@@ -124,19 +146,95 @@ public class TypeCheckVisitor implements ASTVisitor {
 				throw new TypeCheckException(
 						"Illegal combination of " + t0.toString() + " and " + t1.toString() + " for " + t.kind);
 		} else if (t.kind == BARARROW) {
-			if (t0 == IMAGE && ((binaryChain.getE1() instanceof FilterOpChain)
-					&& (binaryChain.getE1().firstToken.kind == OP_GRAY || binaryChain.getE1().firstToken.kind == OP_BLUR
-							|| binaryChain.getE1().firstToken.kind == OP_CONVOLVE))) {
-				binaryChain.getE1().settype(IMAGE);
-			} else
+			if (t1 == IMAGE && ((binaryChain.getE1() instanceof FilterOpChain)
+					&& (binaryChain.getE1().firstToken.kind == OP_GRAY
+							|| binaryChain.getE1().firstToken.kind == OP_CONVOLVE
+							|| binaryChain.getE1().firstToken.kind == OP_BLUR)))
+
+				binaryChain.settype(IMAGE);
+
+			else
 				throw new TypeCheckException(
 						"Illegal combination of " + t0.toString() + " and " + t1.toString() + " for " + t.kind);
 		} else
 			throw new TypeCheckException(
 					"Illegal combination of " + t0.toString() + " and " + t1.toString() + " for " + t.kind);
-
 		return binaryChain;
 	}
+
+	/*
+	 * @Override public Object visitBinaryChain(BinaryChain binaryChain, Object
+	 * arg) throws Exception { // TODO Auto-generated method stub TypeName t0 =
+	 * ((Chain) binaryChain.getE0().visit(this, null)).gettype(); TypeName t1 =
+	 * ((ChainElem) binaryChain.getE1().visit(this, null)).gettype();
+	 * 
+	 * Token t = binaryChain.getArrow();
+	 * 
+	 * if (t.kind == ARROW) {
+	 * 
+	 * if (t1 == IMAGE && (t0 == URL || t0 == FILE))
+	 * 
+	 * binaryChain.settype(IMAGE);
+	 * 
+	 * else if (t0 == FRAME) {
+	 * 
+	 * if (binaryChain.getE1() instanceof FrameOpChain) {
+	 * 
+	 * if (binaryChain.getE1().firstToken.kind == KW_SHOW ||
+	 * binaryChain.getE1().firstToken.kind == KW_HIDE ||
+	 * binaryChain.getE1().firstToken.kind == KW_MOVE) {
+	 * 
+	 * binaryChain.settype(FRAME); } else if
+	 * (binaryChain.getE1().firstToken.kind == KW_XLOC ||
+	 * binaryChain.getE1().firstToken.kind == KW_YLOC) {
+	 * 
+	 * binaryChain.settype(INTEGER); } else throw new TypeCheckException(
+	 * "Illegal combination of " + t0.toString() + " and " + t1.toString() +
+	 * " for " + t.kind); } else throw new TypeCheckException(
+	 * "Illegal combination of " + t0.toString() + " and " + t1.toString() +
+	 * " for " + t.kind);
+	 * 
+	 * } else if (t0 == IMAGE) { if (binaryChain.getE1() instanceof
+	 * ImageOpChain) { if (binaryChain.getE1().firstToken.kind == OP_WIDTH ||
+	 * binaryChain.getE1().firstToken.kind == OP_HEIGHT) {
+	 * binaryChain.settype(INTEGER); } else if
+	 * (binaryChain.getE1().firstToken.kind == KW_SCALE) {
+	 * binaryChain.settype(IMAGE); } else throw new TypeCheckException(
+	 * "Illegal combination of " + t0.toString() + " and " + t1.toString() +
+	 * " for " + t.kind); } else if (t1 == FRAME) { binaryChain.settype(FRAME);
+	 * } else if (t1 == FILE) { binaryChain.settype(NONE); } else if
+	 * (binaryChain.getE1() instanceof FilterOpChain) { if
+	 * (binaryChain.getE1().firstToken.kind == OP_GRAY ||
+	 * binaryChain.getE1().firstToken.kind == OP_CONVOLVE ||
+	 * binaryChain.getE1().firstToken.kind == OP_BLUR) {
+	 * binaryChain.settype(IMAGE); } else throw new TypeCheckException(
+	 * "Illegal combination of " + t0.toString() + " and " + t1.toString() +
+	 * " for " + t.kind); } else if (binaryChain.getE1() instanceof IdentChain)
+	 * { binaryChain.settype(IMAGE); } else if ((binaryChain.getE1() instanceof
+	 * IdentChain) && (binaryChain.getE1().gettype() == IMAGE)) {
+	 * binaryChain.settype(IMAGE); } else throw new TypeCheckException(
+	 * "Illegal combination of " + t0.toString() + " and " + t1.toString() +
+	 * " for " + t.kind);
+	 * 
+	 * } else if (t0 == INTEGER) { if ((binaryChain.getE1() instanceof
+	 * IdentChain) && binaryChain.getE1().gettype() == INTEGER) {
+	 * binaryChain.settype(INTEGER); } else throw new TypeCheckException(
+	 * "Illegal combination of " + t0.toString() + " and " + t1.toString() +
+	 * " for " + t.kind); } else throw new TypeCheckException(
+	 * "Illegal combination of " + t0.toString() + " and " + t1.toString() +
+	 * " for " + t.kind); } else if (t.kind == BARARROW) { if (t0 == IMAGE &&
+	 * ((binaryChain.getE1() instanceof FilterOpChain) &&
+	 * (binaryChain.getE1().firstToken.kind == OP_GRAY ||
+	 * binaryChain.getE1().firstToken.kind == OP_BLUR ||
+	 * binaryChain.getE1().firstToken.kind == OP_CONVOLVE))) {
+	 * binaryChain.getE1().settype(IMAGE); } else throw new TypeCheckException(
+	 * "Illegal combination of " + t0.toString() + " and " + t1.toString() +
+	 * " for " + t.kind); } else throw new TypeCheckException(
+	 * "Illegal combination of " + t0.toString() + " and " + t1.toString() +
+	 * " for " + t.kind);
+	 * 
+	 * return binaryChain; }
+	 */
 
 	@Override
 	public Object visitBinaryExpression(BinaryExpression binaryExpression, Object arg) throws Exception {
@@ -194,6 +292,9 @@ public class TypeCheckVisitor implements ASTVisitor {
 				case LE:
 				case GT:
 				case GE:
+				case AND:
+				case OR:
+				case MOD:
 					binaryExpression.settype(t0);
 					break;
 				default:
@@ -207,6 +308,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 			if ((t0 == INTEGER && t1 == IMAGE) || (t1 == INTEGER && t0 == IMAGE)) {
 				switch (binaryExpression.getOp().kind) {
 				case TIMES:
+				case DIV:
 					binaryExpression.settype(IMAGE);
 					break;
 				default:
@@ -280,6 +382,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitFilterOpChain(FilterOpChain filterOpChain, Object arg) throws Exception {
 		// TODO Auto-generated method stub
+		filterOpChain.getArg().visit(this, arg);
 		if (filterOpChain.getArg().getExprList().size() == 0) {
 			filterOpChain.settype(IMAGE);
 		} else
@@ -316,6 +419,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 		// TODO Auto-generated method stub
 		Dec dec = symtab.lookup(identChain.getFirstToken().getText());
 		if (dec != null) {
+			identChain.setDec(dec);
 			identChain.settype(dec.gettype());
 			return identChain;
 		}

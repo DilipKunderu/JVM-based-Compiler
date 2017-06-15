@@ -13,6 +13,7 @@ public class PLPRuntimeFilterOps {
 	public static final String JVMDesc = "Lcop5556sp17/PLPRuntimeFilterOps;";
 	
 	static final float ninth = 1.0f/9.0f;
+	
 	static 	final float[] blurKernel = {
 			ninth, ninth, ninth,
 			ninth, ninth, ninth,
