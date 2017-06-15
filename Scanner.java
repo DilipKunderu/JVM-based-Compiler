@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+//import cop5556sp17.Scanner.Kind;
+
 public class Scanner {
 	/**
 	 * Kind enum
@@ -161,6 +163,11 @@ public class Scanner {
 		public int intVal() throws NumberFormatException {
 			// TODO IMPLEMENT THIS
 			return Integer.parseInt(chars.substring(pos, pos + length));
+		}
+
+		public boolean isKind(Kind kind) {
+			// TODO Auto-generated method stub
+			return this.kind.equals(kind);
 		}
 
 	}
