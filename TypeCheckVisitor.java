@@ -170,21 +170,13 @@ public class TypeCheckVisitor implements ASTVisitor {
 		} else if (((val1Obj.getType() == TypeName.IMAGE
 					&& val2Obj.getType() == TypeName.INTEGER) 
 				|| (val1Obj.getType() == TypeName.INTEGER
-					&& val2Obj.getType() == TypeName.IMAGE)) && (op.kind == Kind.TIMES)){
+					&& val2Obj.getType() == TypeName.IMAGE)) 
+					&& (op.kind == Kind.TIMES || op.kind == Kind.DIV || op.kind == Kind.MOD)){
 			binaryExpression.setType(TypeName.IMAGE);
 		} else if (val1Obj.getType() == TypeName.IMAGE 
 				&& val2Obj.getType() == TypeName.IMAGE 
 				&& (op.kind == Kind.PLUS || op.kind == Kind.MINUS)) {
 			binaryExpression.setType(TypeName.IMAGE);
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			//check if frame + frame scenario comes
 		} else if (val1Obj.getType() == val2Obj.getType()){
 			binaryExpression.setType(TypeName.BOOLEAN);
@@ -268,6 +260,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitFilterOpChain(FilterOpChain filterOpChain, Object arg) throws Exception {
 		// TODO Auto-generated method stub
 		Tuple tuple = filterOpChain.getArg();
+		tuple.visit(this, null);
 		if (tuple.getExprList().size() == 0) {
 			filterOpChain.setType(TypeName.IMAGE);
 			return filterOpChain;
@@ -449,7 +442,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitImageOpChain(ImageOpChain imageOpChain, Object arg) throws Exception {
 		// TODO Auto-generated method stub
-		Tuple tuple = imageOpChain.getArg();
+		Tuple tuple = (Tuple) imageOpChain.getArg().visit(this, arg);
 		Kind kind = imageOpChain.getFirstToken().kind;
 		if (kind == Kind.OP_WIDTH || kind == Kind.OP_HEIGHT) {
 			if (tuple.getExprList().size() != 0) {

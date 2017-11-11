@@ -9,7 +9,7 @@ public class Dec extends ASTNode {
 	
 	final Token ident;
 	public TypeName type;
-	int slotNumber;
+	int slotNumber = -1;
 	Label startLabel;
 	Label endLabel;
 	
