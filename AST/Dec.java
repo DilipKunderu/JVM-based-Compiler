@@ -1,10 +1,12 @@
 package cop5556sp17.AST;
 
 import cop5556sp17.Scanner.Token;
+import cop5556sp17.AST.Type.TypeName;
 
 public class Dec extends ASTNode {
 	
 	final Token ident;
+	public TypeName type;
 
 	public Dec(Token firstToken, Token ident) {
 		super(firstToken);
@@ -12,10 +14,12 @@ public class Dec extends ASTNode {
 		this.ident = ident;
 	}
 
-	public Token getType() {
-		return firstToken;
+	public TypeName getType() {
+		return type;
 	}
-
+	public void setType(TypeName type) {
+		this.type = type;
+	}
 	public Token getIdent() {
 		return ident;
 	}

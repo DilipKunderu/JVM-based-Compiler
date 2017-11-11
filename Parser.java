@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import cop5556sp17.Scanner.Token;
 import cop5556sp17.AST.*;
+import cop5556sp17.AST.Type.TypeName;
 
 public class Parser {
 
@@ -87,7 +88,6 @@ public class Parser {
 	Expression elem() throws SyntaxException {
 		//TODO
 		Token firstToken = t;
-		//todo: should the factor and all the sub routines have the same firstToken?
 		Expression e0 = factor();
 		Expression e1 = null;
 		while(isStrongOp()) {
@@ -108,11 +108,13 @@ public class Parser {
 		case IDENT: {
 			consume();
 			e = new IdentExpression(firstToken);
+//			e.setType(Type.getTypeName(firstToken));
 		}
 			break;
 		case INT_LIT: {
 			consume();
 			e = new IntLitExpression(firstToken);
+//			e.setVal(firstToken.intVal());
 		}
 			break;
 		case KW_TRUE:
@@ -238,7 +240,6 @@ public class Parser {
 			if (t.isKind(ASSIGN)) {
 				consume();
 				Expression e = expression();
-				//todo: check if firstToken is what needs to save
 				match(SEMI);
 				return new AssignmentStatement(firstToken, new IdentLValue(firstToken), e);
 			} else {
@@ -267,10 +268,7 @@ public class Parser {
 				return ifStatement();
 			}
 			return null;
-		} else if (stmtMayAlsoStarts()) {	
-//			consume();
-//			arg();
-//			subChain();
+		} else if (stmtMayAlsoStarts()) {
 			Chain chain = chain();
 			match(SEMI);
 			return chain;
@@ -313,9 +311,6 @@ public class Parser {
 
 	Chain chain() throws SyntaxException {
 		//TODO
-//		chainElem();
-//		subChain();
-		//new method
 		Token firstToken = t;
 		ChainElem e0 = chainElem();
 		Token tArrow = arrowOp();

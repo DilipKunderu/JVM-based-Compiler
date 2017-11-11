@@ -1,0 +1,103 @@
+/**  Important to test the error cases in case the
+ * AST is not being completely traversed.
+ * 
+ * Only need to test syntactically correct programs, or
+ * program fragments.
+ */
+
+package cop5556sp17;
+
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import cop5556sp17.AST.ASTNode;
+import cop5556sp17.AST.Dec;
+import cop5556sp17.AST.IdentExpression;
+import cop5556sp17.AST.Program;
+import cop5556sp17.AST.Statement;
+import cop5556sp17.Parser.SyntaxException;
+import cop5556sp17.Scanner.IllegalCharException;
+import cop5556sp17.Scanner.IllegalNumberException;
+import cop5556sp17.TypeCheckVisitor.TypeCheckException;
+
+public class TypeCheckVisitorTest {
+	
+	
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
+	@Test
+	public void testAssignmentBoolLit0() throws Exception{
+		String input = "p {\nboolean y \ny <- false;}";
+		Scanner scanner = new Scanner(input);
+		scanner.scan();
+		Parser parser = new Parser(scanner);
+		ASTNode program = parser.parse();
+		TypeCheckVisitor v = new TypeCheckVisitor();
+		program.visit(v, null);
+	}
+
+	@Test
+	public void testAssignmentBoolLitError0() throws Exception{
+		String input = "p {\nboolean y \ny <- 3;}";
+		Scanner scanner = new Scanner(input);
+		scanner.scan();
+		Parser parser = new Parser(scanner);
+		ASTNode program = parser.parse();
+		TypeCheckVisitor v = new TypeCheckVisitor();
+		thrown.expect(TypeCheckVisitor.TypeCheckException.class);
+		program.visit(v, null);		
+	}
+	
+	@Test
+	public void testProgram() throws Exception{
+		String input = "p {\ninteger i i <- j;}";
+		Scanner scanner = new Scanner(input);
+		scanner.scan();
+		Parser parser = new Parser(scanner);
+		ASTNode program = parser.parse();
+		TypeCheckVisitor v = new TypeCheckVisitor();
+		thrown.expect(TypeCheckVisitor.TypeCheckException.class);
+		program.visit(v, null);
+	}
+	
+	@Test
+	public void testProgram1() throws Exception{
+		String input = "p { boolean b while (b == true) {integer i integer j if (i < j) {  i <- j; i <- i *j;}}}";
+		Scanner scanner = new Scanner(input);
+		scanner.scan();
+		Parser parser = new Parser(scanner);
+		ASTNode program = parser.parse();
+		TypeCheckVisitor v = new TypeCheckVisitor();
+		program.visit(v, null);
+	}
+
+	@Test
+	public void testProgram2() throws Exception{
+		String input = "p url u { image a image b c -> id |-> gray; b <- a; while (a<b) {integer l}}";
+		Scanner scanner = new Scanner(input);
+		scanner.scan();
+		Parser parser = new Parser(scanner);
+		ASTNode program = parser.parse();
+		TypeCheckVisitor v = new TypeCheckVisitor();
+		thrown.expect(TypeCheckVisitor.TypeCheckException.class);
+		program.visit(v, null);
+	}
+	
+	@Test
+	public void testProgram3() throws Exception{
+		String input = "p {frame xyz image cow \n cow -> xyz;}";
+		Scanner scanner = new Scanner(input);
+		scanner.scan();
+		Parser parser = new Parser(scanner);
+		ASTNode program = parser.parse();
+		TypeCheckVisitor v = new TypeCheckVisitor();
+		program.visit(v, null);
+	}
+		
+}
