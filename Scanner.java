@@ -86,7 +86,6 @@ public class Scanner {
 		//returns the text of this Token
 		public String getText() {
 			//TODO IMPLEMENT THIS
-//			return null;
 			if (kind == Kind.EOF) return "eof";
 			return chars.substring(pos, pos + length);
 		}
@@ -94,8 +93,11 @@ public class Scanner {
 		//returns a LinePos object representing the line and column of this Token
 		LinePos getLinePos(){
 			//TODO IMPLEMENT THIS
-//			return null;
 			return getLinePosObj(pos);
+		}
+		
+		boolean isKind(Kind k) {
+			return k.equals(kind);
 		}
 		
 		Token(Kind kind, int pos, int length) {
@@ -114,13 +116,54 @@ public class Scanner {
 		 */
 		public int intVal() throws NumberFormatException{
 			//TODO IMPLEMENT THIS
-//			return 0;
 			try {
 				return Integer.parseInt(chars.substring(pos, pos + length));
 			} catch (Exception e) {
 				throw new NumberFormatException("Received token is not integer type. Received kind is " 
 						+ kind);
 			}
+		}
+		
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + ((kind == null) ? 0 : kind.hashCode());
+			result = prime * result + length;
+			result = prime * result + pos;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof Token)) {
+				return false;
+			}
+			Token other = (Token) obj;
+			if (!getOuterType().equals(other.getOuterType())) {
+				return false;
+			}
+			if (kind != other.kind) {
+				return false;
+			}
+			if (length != other.length) {
+				return false;
+			}
+			if (pos != other.pos) {
+				return false;
+			}
+			return true;
+		}
+		
+		private Scanner getOuterType() {
+			return Scanner.this;
 		}
 		
 	}
@@ -147,7 +190,6 @@ public class Scanner {
 	private void createKeyWordMap() {
 		kwMap = new HashMap<>();
 		for (Kind k: Kind.values()) {
-			//should we use eof also as a keyword?
 			if (Kind.EOF != k
 					&& k.getText().length() > 0 
 					&& Character.isJavaIdentifierStart(k.getText().charAt(0))) {
@@ -162,7 +204,6 @@ public class Scanner {
 		IN_IDENT("inIdent"),
 		AFTER_EQ("afterEq"),
 		AFTER_NOT("afterNot"),
-//		AFTER_BACK_SLASH("afterBackSlash"),
 		AFTER_MINUS("afterMinus"),
 		AFTER_LT("afterLt"),
 		AFTER_GT("afterGt"),
@@ -428,14 +469,6 @@ public class Scanner {
 					break;
 				}
 				
-				
-				/*if (ch == '*') {
-					state = State.IS_DIV_SIGN;
-				} else if (ch == '\n') {
-					lines.add(pos+1);
-				} else if (ch == -1) {
-					tokens.add(new Token(Kind.EOF,pos,0));
-				}*/
 				pos++;
 				break;
 
@@ -455,22 +488,7 @@ public class Scanner {
 					break;
 				default:
 					state = State.IN_MULTIPLE_LINE_COMMENT;
-				}
-				
-				
-/*				if (ch == '/') {
-					state = State.START;
-				} else if (ch == '\n') {
-					lines.add(pos+1);
-				} else if (ch == -1) {
-					tokens.add(new Token(Kind.EOF,pos,0));			
-				} else if (ch == '*') {
-					
-				} else {
-					state = State.IN_MULTIPLE_LINE_COMMENT;
-				}*/
-				
-				
+				}	
 				pos++;
 				break;
 			default: assert false;
