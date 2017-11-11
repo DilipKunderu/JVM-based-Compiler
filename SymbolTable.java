@@ -61,8 +61,8 @@ public class SymbolTable {
 		}
 		Map<Integer, Dec> map = symbolmap.get(ident);
         for(int i1 = scopestack.size()-1; i1>=0; i1-- ) {
-			if (map.containsKey(i1)) {
-				return map.get(i1);
+			if (map.containsKey(scopestack.get(i1))) {
+				return map.get(scopestack.get(i1));
 			}
 		}
 		return null;

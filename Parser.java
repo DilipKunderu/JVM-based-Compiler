@@ -114,7 +114,7 @@ public class Parser {
 		case INT_LIT: {
 			consume();
 			e = new IntLitExpression(firstToken);
-//			e.setVal(firstToken.intVal());
+			e.setVal(firstToken.intVal());
 		}
 			break;
 		case KW_TRUE:

@@ -31,7 +31,7 @@ public class TypeCheckVisitorTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
-	@Test
+//	@Test
 	public void testAssignmentBoolLit0() throws Exception{
 		String input = "p {\nboolean y \ny <- false;}";
 		Scanner scanner = new Scanner(input);
@@ -42,7 +42,7 @@ public class TypeCheckVisitorTest {
 		program.visit(v, null);
 	}
 
-	@Test
+//	@Test
 	public void testAssignmentBoolLitError0() throws Exception{
 		String input = "p {\nboolean y \ny <- 3;}";
 		Scanner scanner = new Scanner(input);
@@ -54,7 +54,7 @@ public class TypeCheckVisitorTest {
 		program.visit(v, null);		
 	}
 	
-	@Test
+//	@Test
 	public void testProgram() throws Exception{
 		String input = "p {\ninteger i i <- j;}";
 		Scanner scanner = new Scanner(input);
@@ -66,7 +66,7 @@ public class TypeCheckVisitorTest {
 		program.visit(v, null);
 	}
 	
-	@Test
+//	@Test
 	public void testProgram1() throws Exception{
 		String input = "p { boolean b while (b == true) {integer i integer j if (i < j) {  i <- j; i <- i *j;}}}";
 		Scanner scanner = new Scanner(input);
@@ -77,7 +77,7 @@ public class TypeCheckVisitorTest {
 		program.visit(v, null);
 	}
 
-	@Test
+//	@Test
 	public void testProgram2() throws Exception{
 		String input = "p url u { image a image b c -> id |-> gray; b <- a; while (a<b) {integer l}}";
 		Scanner scanner = new Scanner(input);
@@ -89,7 +89,7 @@ public class TypeCheckVisitorTest {
 		program.visit(v, null);
 	}
 	
-	@Test
+//	@Test
 	public void testProgram3() throws Exception{
 		String input = "p {frame xyz image cow \n cow -> xyz;}";
 		Scanner scanner = new Scanner(input);
@@ -99,5 +99,32 @@ public class TypeCheckVisitorTest {
 		TypeCheckVisitor v = new TypeCheckVisitor();
 		program.visit(v, null);
 	}
+	
+	@Test
+	public void testCasesFailed() throws Exception {
+		String input = "p integer a, integer b "
+				+ "{image img1 image img2 "
+				+ "		if(img1 != img2) {image a a <- img1; } "
+				+ "		if(a != b) {boolean a a <- img1 != img2; }}";
+		input = "testFrame url u1, url u2, file file1 "
+				+ "{frame fra1 frame fra2 image img fra1 -> move (screenheight, screenwidth) -> xloc; img -> fra2; img -> file1;}";
+		input = "prog  boolean y , file x {\n integer z \n scale(100) -> width; blur -> y; convolve -> blur -> gray |-> gray -> width;}";
+		input = "abc integer x, integer x {} ";
+		input = "p \nurl y {\n  image i\n  y->i;\n}";
 		
+				input = "prog1  file file1, integer itx, boolean b1"
+						+ "{ integer ii1 boolean bi1 \n image IMAGE1 frame fram1 sleep itx+ii1; "
+						+ "while (b1){if(bi1)\n{sleep ii1+itx*2;}}\n"
+						+ "file1->blur |->gray;fram1 ->yloc;\n IMAGE1->blur->scale (ii1+1)"
+						+ "|-> gray;\nii1 <- 12345+54321;}";
+
+						input = "tos url u,\n integer x\n{integer y image i u -> i; i -> height; frame f i -> scale (x) -> f;}";
+		Scanner sc = new Scanner(input);
+		sc.scan();
+		Parser p = new Parser(sc);
+		ASTNode prog = p.parse();
+		TypeCheckVisitor v = new TypeCheckVisitor();
+		prog.visit(v, null);
+	}
+	
 }

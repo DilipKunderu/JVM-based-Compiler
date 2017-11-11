@@ -96,7 +96,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 			} else if (c2.getType() == TypeName.FRAME && op.kind == Kind.ARROW) {
 				binaryChain.setType(TypeName.FRAME);
 			} else if (c2.getType() == TypeName.FILE && op.kind == Kind.ARROW) {
-				binaryChain.setType(null);
+				binaryChain.setType(TypeName.NONE);
 			} else if (c2 instanceof IdentChain && op.kind == Kind.ARROW) {
 				binaryChain.setType(TypeName.IMAGE);
 			} else {
@@ -172,6 +172,16 @@ public class TypeCheckVisitor implements ASTVisitor {
 				&& val2Obj.getType() == TypeName.IMAGE 
 				&& (op.kind == Kind.PLUS || op.kind == Kind.MINUS)) {
 			binaryExpression.setType(TypeName.IMAGE);
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			//check if frame + frame scenario comes
 		} else if (val1Obj.getType() == val2Obj.getType()){
 			binaryExpression.setType(TypeName.BOOLEAN);
 		} else {
@@ -270,7 +280,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 			if (tuple.getExprList().size() != 0) {
 				throw new TypeCheckException("With show and hide arguments are not expected.");
 			}
-			frameOpChain.setType(null);
+			frameOpChain.setType(TypeName.NONE);
 		} else if (token.kind == Kind.KW_XLOC || token.kind == Kind.KW_YLOC) {
 			if (tuple.getExprList().size() != 0) {
 				throw new TypeCheckException("With xloc and yloc arguments are not expected.");
@@ -281,7 +291,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 				throw new TypeCheckException("With move 2 arguments are expeceted, and passed are " 
 						+ tuple.getExprList().size());
 			}
-			frameOpChain.setType(null);
+			frameOpChain.setType(TypeName.NONE);
 		} else {
 			throw new TypeCheckException("Some problem in the parser.");
 		}
@@ -378,7 +388,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 		List<ParamDec> paramList = program.getParams();
 		Block progBlock = program.getB();
 		for (ParamDec p: paramList) {
-			symtab.insert(p.getFirstToken().getText(), p);
+			p.visit(this, null);
+//			symtab.insert(p.getIdent().getText(), p);
 		}
 		progBlock.visit(this, null);
 		return program;
