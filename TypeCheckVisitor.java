@@ -97,11 +97,15 @@ public class TypeCheckVisitor implements ASTVisitor {
 				binaryChain.setType(TypeName.FRAME);
 			} else if (c2.getType() == TypeName.FILE && op.kind == Kind.ARROW) {
 				binaryChain.setType(TypeName.NONE);
-			} else if (c2 instanceof IdentChain && op.kind == Kind.ARROW) {
+			} else if (c2 instanceof IdentChain && op.kind == Kind.ARROW 
+					&& c2.type == TypeName.IMAGE) {
 				binaryChain.setType(TypeName.IMAGE);
 			} else {
 				throw new TypeCheckException("Not a valid chain statement");
 			}
+		} else if (c1.getType() == TypeName.INTEGER 
+				&& c2 instanceof IdentChain && c2.getType() == TypeName.INTEGER) {
+			binaryChain.setType(TypeName.INTEGER);
 		} else {
 			throw new TypeCheckException("Not a valid chain statement");
 		}
@@ -270,7 +274,6 @@ public class TypeCheckVisitor implements ASTVisitor {
 		}
 		throw new TypeCheckException("Filter operator Chain doesnt take any arguments.");
 	}
-
 	@Override
 	public Object visitFrameOpChain(FrameOpChain frameOpChain, Object arg) throws Exception {
 		// TODO Auto-generated method stub
@@ -307,6 +310,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 					+ " is not in scope");
 		}
 		identChain.setType(dec.getType());
+		identChain.setDec(dec);
 		return identChain;
 	}
 

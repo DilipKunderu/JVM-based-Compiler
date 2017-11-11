@@ -4,10 +4,19 @@ import cop5556sp17.Scanner.Token;
 
 public class IdentChain extends ChainElem {
 
+	Dec dec;
+
+	public Dec getDec() {
+		return dec;
+	}
+
+	public void setDec(Dec dec) {
+		this.dec = dec;
+	}
+
 	public IdentChain(Token firstToken) {
 		super(firstToken);
 	}
-
 
 	@Override
 	public String toString() {
